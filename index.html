@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pythonistavp — био, проекты, боты</title>
+<meta name="description" content="Разработчик браузерных расширений: Telegram, проекты, боты, донат TON.">
+</head>
+<body>
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    text-align: left;
+    margin: 0;
+    background: #0a0a0a;
+    color: #f4f1ea;
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.6;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
+  ::selection { background: #f4f1ea; color: #0a0a0a; }
+  a { color: inherit; }
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 10px 18px;
+    background: #0a0a0af2; border-bottom: 1px solid #2b2b2b;
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px;
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+  .topbar a { text-decoration: none; color: #cfc9bd; margin-left: 14px; }
+  .topbar a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px 80px; }
+  .overline {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #a9a294;
+    margin: 34px 0 12px; display: flex; align-items: center; gap: 12px;
+  }
+  .overline::after { content: ""; flex: 1; height: 1px; background: #2b2b2b; }
+  h1.giant {
+    margin: 0; font-weight: 900; line-height: .92;
+    font-size: clamp(56px, 11vw, 124px);
+    letter-spacing: -.02em; text-transform: uppercase;
+    font-family: "Arial Black", Arial, sans-serif;
+  }
+  h1.giant .out {
+    color: transparent; -webkit-text-stroke: 2px #f4f1ea;
+  }
+  .lede { font-size: 19px; max-width: 60ch; color: #e6e0d3; }
+  .lede b { background: #f4f1ea; color: #0a0a0a; padding: 0 6px; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none;
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #bdb6a6;
+  }
+  .meta-row li { border: 1px solid #333; border-radius: 999px; padding: 5px 12px; }
+  .btnrow { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; }
+  .btn {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase; text-decoration: none;
+    padding: 12px 20px; border: 1px solid #f4f1ea; display: inline-block;
+  }
+  .btn.solid { background: #f4f1ea; color: #0a0a0a !important; }
+  .btn.solid:hover { background: #fff; }
+  .btn.line { background: transparent; color: #f4f1ea !important; }
+  .btn.line:hover { background: #f4f1ea; color: #0a0a0a !important; }
+  .marquee {
+    margin: 26px -20px 0; border-top: 1px solid #2b2b2b; border-bottom: 1px solid #2b2b2b;
+    overflow: hidden; white-space: nowrap;
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px;
+    letter-spacing: .3em; text-transform: uppercase; color: #8f887a;
+  }
+  .marquee div { display: inline-block; padding: 9px 0; animation: mq 26s linear infinite; }
+  @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .hero-main { margin-top: 8px; max-width: 680px; }
+  .cursor { display: inline-block; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .btn, .soc, .toc a, ul.rows a, .copyBtn { transition: background .18s ease, color .18s ease, border-color .18s ease; }
+  pre.art.art-braille {
+    text-align: center; font-size: 14px; line-height: 1.32; letter-spacing: 0;
+    padding: 28px 8px; white-space: pre; overflow-x: auto;
+    font-family: "DejaVu Sans Mono", "Courier New", Courier, ui-monospace, Menlo, Consolas, monospace;
+    color: #f4f1ea;
+    font-variant-ligatures: none;
+    animation: breathe 5s ease-in-out infinite alternate;
+  }
+  @keyframes breathe { from { opacity: .82; text-shadow: 0 0 4px #ffffff33; } to { opacity: 1; text-shadow: 0 0 14px #ffffff66; } }
+  .fig-wide { margin-top: 26px; position: relative; overflow: hidden; }
+  .fig-wide::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .45;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, #00000055 2px 3px);
+  }
+  @media (max-width: 640px) { pre.art.art-braille { font-size: 8px; } }
+  @media (max-width: 420px) { pre.art.art-braille { font-size: 7px; } }
+  figure.fig {
+    margin: 34px 0 0; border: 1px solid #333; background: #101010;
+  }
+  figure.fig figcaption {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px;
+    letter-spacing: .08em; color: #8f887a; padding: 8px 12px; border-top: 1px solid #2b2b2b;
+  }
+  pre.art {
+    margin: 0; padding: 18px 10px; text-align: center;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.4; color: #f4f1ea; overflow-x: auto;
+  }
+  section.ch { margin-top: 54px; }
+  .ch-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 2px solid #f4f1ea; padding-bottom: 8px; }
+  .ch-num { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: #8f887a; letter-spacing: .2em; }
+  .ch-head h2 { margin: 0; font-size: 30px; letter-spacing: -.01em; font-family: "Arial Black", Arial, sans-serif; text-transform: uppercase; }
+  .ch-body { padding-top: 14px; color: #ddd7c8; font-size: 16.5px; }
+  .ch-body p { margin: 10px 0; max-width: 68ch; }
+  ul.rows { list-style: none; margin: 0; padding: 0; }
+  ul.rows li {
+    display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+    padding: 10px 2px; border-bottom: 1px dotted #3a3a3a; font-size: 16px;
+  }
+  ul.rows li .k { color: #8f887a; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; flex: 0 0 auto; }
+  ul.rows a { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  ul.rows a:hover { background: #f4f1ea; color: #0a0a0a; }
+  .tag {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: .14em;
+    text-transform: uppercase; border: 1px solid #555; border-radius: 999px; padding: 2px 9px;
+    color: #cfc9bd; white-space: nowrap;
+  }
+  .tag.bad { border-color: #f4f1ea; background: #f4f1ea; color: #0a0a0a; }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+  @media (max-width: 640px) { .cols2 { grid-template-columns: 1fr; } }
+  .soc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: #333; border: 1px solid #333; margin-top: 12px; }
+  .soc { background: #0e0e0e; padding: 14px; text-decoration: none; display: block; }
+  .soc:hover { background: #f4f1ea; }
+  .soc:hover b, .soc:hover span { color: #0a0a0a !important; }
+  .soc b { display: block; font-family: "Arial Black", Arial, sans-serif; font-size: 15px; text-transform: uppercase; letter-spacing: .02em; }
+  .soc span { display: block; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #8f887a; margin-top: 4px; word-break: break-all; }
+  .langs dt {
+    font-family: "Arial Black", Arial, sans-serif; font-size: 17px; text-transform: uppercase;
+    margin-top: 14px;
+  }
+  .langs dd { margin: 2px 0 0; color: #a9a294; font-size: 15px; }
+  .langs dd::before { content: "— "; }
+  .poster {
+    background: #f4f1ea; color: #0a0a0a; margin-top: 54px;
+    padding: 30px 26px; border: 1px solid #f4f1ea; position: relative;
+  }
+  .poster::before {
+    content: "НЕ ПИШУ"; position: absolute; top: -14px; right: 18px;
+    background: #0a0a0a; color: #f4f1ea; font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px; letter-spacing: .3em; padding: 4px 12px; border: 1px solid #f4f1ea;
+  }
+  .poster h2 { margin: 0 0 8px; font-family: "Arial Black", Arial, sans-serif; font-size: 28px; text-transform: uppercase; }
+  .poster ul { margin: 10px 0; padding-left: 22px; }
+  .poster li { margin: 4px 0; font-weight: 700; }
+  .poster .fine { font-size: 14px; border-top: 1px solid #0a0a0a; padding-top: 10px; margin-top: 12px; }
+  .ton {
+    margin-top: 12px; border: 1px dashed #555; padding: 14px;
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px;
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  }
+  .ton code { word-break: break-all; color: #f4f1ea; }
+  .copyBtn {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    background: transparent; color: #f4f1ea; border: 1px solid #f4f1ea;
+    padding: 8px 14px; cursor: pointer; border-radius: 0;
+  }
+  .copyBtn:hover { background: #f4f1ea; color: #0a0a0a; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .toc a {
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px;
+    border: 1px solid #333; padding: 6px 12px; text-decoration: none; color: #bdb6a6;
+  }
+  .toc a:hover { border-color: #f4f1ea; color: #fff; }
+  .reveal { transition: opacity .6s ease, transform .6s ease; }
+  .reveal.pre { opacity: 0; transform: translateY(14px); }
+  .reveal.in { opacity: 1; transform: none; }
+  footer.fin {
+    margin-top: 60px; border-top: 2px solid #f4f1ea; padding-top: 18px;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #8f887a;
+  }
+  .stamp {
+    display: inline-block; border: 1px solid #8f887a; padding: 4px 10px;
+    transform: rotate(-2deg); letter-spacing: .2em; text-transform: uppercase; font-size: 11px;
+    transition: transform .25s ease;
+  }
+  .stamp:hover { transform: rotate(1deg) scale(1.05); }
+</style>
+
+<nav class="topbar">
+  <span>pvp — bio</span>
+  <span><a href="#tg">tg</a><a href="#projects">проекты</a><a href="#bots">боты</a><a href="#donat">донат</a></span>
+</nav>
+
+<div class="wrap">
+  <div class="overline">★ личная страница ★</div>
+  <h1 class="giant">PYTHONISTA<br><span class="out">VP</span><span class="cursor">_</span></h1>
+
+  <div class="hero-main">
+    <div>
+      <p class="lede">Привет! Я — разработчик. Создаю <b>расширения для браузеров</b>, ботов и плагины — и делюсь ими с сообществом.</p>
+      <ul class="meta-row">
+        <li>id 8881642708</li>
+        <li>ton / toncoin</li>
+      </ul>
+      <div class="btnrow">
+        <a class="btn solid" href="https://t.me/pythonistavp" target="_blank" rel="noopener">Написать мне</a>
+        <a class="btn line" href="https://t.me/Channel_and_Bot_News" target="_blank" rel="noopener">Новости</a>
+        <a class="btn line" href="https://gitlab.com/pythonistavp" target="_blank" rel="noopener">GitLab</a>
+      </div>
+      <div class="toc">
+        <a href="#about">01 обо мне</a><a href="#tg">02 telegram</a><a href="#soc">03 соцсети</a><a href="#lang">04 языки</a><a href="#projects">05 проекты</a><a href="#bots">06 боты</a><a href="#fav">07 избранное</a>
+      </div>
+    </div>
+    <figure class="fig fig-wide">
+<pre class="art art-braille">
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡤⠤⢤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠚⠉⣀⡴⠊⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⣰⠋⠀⢠⡞⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⡇⠀⢠⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠤⠔⠒⠛⠂⢒⡲⠶⠴⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⢳⠀⠈⣧⠀⠀⠀⠀⠀⠀⢀⡔⢲⣀⡤⠚⠉⠀⠀⢀⣠⠶⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠑⢦⡘⢆⠀⢀⣀⣀⣀⡞⠀⠀⠫⠀⠀⠀⠀⠶⣿⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⡠⠿⠛⠛⠉⠁⠀⠀⠀⠀⠀⠀⢣⠀⠀⠀⠀⠀⠈⠙⠠⠄⣀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⡠⠚⠁⠀⣠⠆⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⢣⠀⠀⠀⠀⠀⠠⢄⡱⠀⠙⠢⣄⠀⠀⠀⠀
+⠀⠀⠀⠀⢠⠎⠀⢀⢀⠔⠡⡀⠀⠀⠀⠀⢀⡇⡄⠀⠀⠀⠈⣆⣀⣀⠀⠤⠄⠒⠉⠀⢄⠀⠈⠁⢆⠀⠀
+⠀⠀⠀⣠⠃⠀⢠⠣⠂⠀⠠⠀⠁⢒⡀⠄⣼⢃⡇⠈⠉⠐⡖⢰⠄⠀⢦⠤⠀⢀⣀⠀⠀⠹⣶⠤⢀⠳⡀
+⠀⠀⢀⡏⠀⣰⡣⢁⠠⢤⠓⢀⡝⠀⠀⡘⠀⠸⢰⠀⠀⠀⣧⠘⠈⢆⣈⡄⠀⠀⣦⠀⠈⠁⠺⣄⠀⠑⠾
+⠀⠀⣾⠀⠐⢠⠉⠀⢠⠇⢀⡾⣀⡀⡰⠀⠃⠀⣾⠀⠀⠠⡟⡤⡏⠈⢆⢱⠀⠀⢸⡳⡀⠀⠀⢹⡆⠀⠀
+⠀⠀⣻⠀⠀⡎⠀⢠⢾⠀⡞⡇⠉⢱⠃⢠⠀⠀⢹⠀⠀⢰⠁⢡⠇⠀⠘⡘⡆⠀⠈⣇⢳⡀⠀⠈⣧⠀⠀
+⠀⠀⢿⠀⢸⠀⢠⢻⡍⡼⣸⠀⢀⠃⠀⠈⠀⠀⠘⡇⠀⡘⠀⢀⣗⣖⣦⣼⣗⠀⠀⣏⢶⣱⡀⠀⢻⠀⠀
+⠀⠀⣸⠒⠓⢤⠃⣼⡧⢣⡍⢀⡆⠀⢀⠃⠀⠀⠀⡇⢀⠃⠀⣸⣟⡿⡅⡌⢹⠀⠀⣧⢺⣿⣵⠀⢨⡇⠀
+⠀⠀⢻⠀⠀⣨⠀⢎⡗⣡⠇⡾⡇⠀⠀⠀⠀⠀⠀⠇⠌⠀⠀⠛⣿⢻⠠⠀⡞⡆⢸⣇⢎⡇⠐⣇⠘⠁⠀
+⠀⠀⢸⡄⠎⠸⢄⠎⢙⠤⣹⢻⠗⠛⡛⣳⡶⠤⠀⠞⠀⠀⠀⠸⠭⠶⠀⢸⠰⡇⣼⣿⣸⡇⠀⠈⣶⡆⠀
+⠀⡠⠊⠀⠀⠀⠀⣱⢸⢲⡟⣩⡾⠉⠉⠀⠀⠀⠀⠀⠀⠀⠆⠀⠀⠀⠀⢸⡃⣷⡟⢻⣼⡁⠀⠀⠈⠁⠀
+⢸⡇⠀⠀⠐⠈⠀⠀⣹⢾⠱⣢⠹⡆⠀⠀⠀⠀⠀⠠⠐⢲⠄⠀⠀⢀⣠⢣⣱⣾⠃⠀⠿⠀⠀⠀⠀⠀⠀
+⠀⡇⠀⠀⠀⠀⠂⠁⠈⣿⢣⠱⣉⢷⣢⡤⠀⣀⠀⠈⠒⢈⣀⢤⡒⣿⢃⢆⡇⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠳⡀⠀⠀⠀⠀⠄⠂⠉⢿⣂⠙⣔⠻⣽⣄⠀⠀⢸⢯⡷⣎⣣⡼⣿⡉⡞⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⣵⡤⡀⠀⠀⠀⠠⠐⠉⠙⢆⠈⠣⡽⣞⢷⣄⢀⠠⠽⢽⢉⢎⣿⢸⠱⢀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢀⡟⠀⠀⠀⠀⠠⡢⡀⠀⠀⠀⠢⡀⠈⠺⣍⠞⣦⠀⠊⠀⢇⠎⣷⠇⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⡞⠀⠀⠀⠀⠀⠐⢹⣵⠀⠀⠘⠂⠐⢄⠀⠘⣎⠴⡱⡀⠀⠸⡘⡏⠀⠃⡞⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀
+</pre>
+    </figure>
+  </div>
+
+  <div class="marquee"><div>&nbsp;расширения • боты • плагины • exteraGram • антивирус • котики • прошивки • скрипты •&nbsp;расширения • боты • плагины • exteraGram • антивирус • котики • прошивки • скрипты •</div></div>
+
+  <section class="ch reveal" id="about">
+    <div class="ch-head"><span class="ch-num">01</span><h2>Обо мне</h2></div>
+    <div class="ch-body cols2">
+      <div>
+        <p><b>Игры.</b> Garry's Mod, Dota 2, Minecraft, CS2, CS 1.6, Roblox, Brawl Stars, Mafia 2 и много чего ещё.</p>
+      </div>
+      <div>
+        <p><b>Интересы.</b> Изучаю новые библиотеки и возможности языков. AI: современные технологии искусственного интеллекта. Разработка: создаю игры и строю миры в Roblox.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch reveal" id="tg">
+    <div class="ch-head"><span class="ch-num">02</span><h2>Telegram</h2></div>
+    <div class="ch-body">
+      <ul class="rows">
+        <li><span>ID — <b>8881642708</b></span><span class="k"><button class="copyBtn" data-copy="8881642708">копировать</button></span></li>
+        <li><span>Личка — <a href="https://t.me/pythonistavp" target="_blank" rel="noopener">@pythonistavp</a></span></li>
+        <li><span>Личка 2 — <a href="https://t.me/tgsk56" target="_blank" rel="noopener">@tgsk56</a></span></li>
+        <li><span>У кого бан — <a href="https://t.me/tgsk56_VCbot" target="_blank" rel="noopener">@tgsk56_VCbot</a></span></li>
+        <li><span>Прайс — <a href="https://t.me/+LNnfi_HYSiVlZTAx" target="_blank" rel="noopener">открыть прайс</a></span></li>
+        <li><span>Отзывы — <a href="https://t.me/reviews_Tgsk56" target="_blank" rel="noopener">@reviews_Tgsk56</a></span></li>
+      </ul>
+      <div id="donat" class="ton">
+        <span>донат — TON:&nbsp;<code id="tonEl">UQC4_hn0hEjfusNjwBHabSkh68pYhXUEL3daMb78YtEVqvby</code></span>
+        <button class="copyBtn" data-copy="UQC4_hn0hEjfusNjwBHabSkh68pYhXUEL3daMb78YtEVqvby">копировать адрес</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="ch reveal" id="soc">
+    <div class="ch-head"><span class="ch-num">03</span><h2>Соцсети</h2></div>
+    <div class="soc-grid">
+      <a class="soc" href="https://gitlab.com/pythonistavp" target="_blank" rel="noopener"><b>GitLab</b><span>gitlab.com/pythonistavp</span></a>
+      <a class="soc" href="https://addons.mozilla.org/ru/firefox/user/20338543/" target="_blank" rel="noopener"><b>Firefox</b><span>мои расширения</span></a>
+      <a class="soc" href="https://www.youtube.com/@pythonistavp" target="_blank" rel="noopener"><b>YouTube</b><span>@pythonistavp · скоро</span></a>
+      <a class="soc" href="https://x.com/pythonistavp" target="_blank" rel="noopener"><b>X</b><span>x.com/pythonistavp</span></a>
+      <a class="soc" href="https://funpay.com/users/22195869/" target="_blank" rel="noopener"><b>FunPay</b><span>users/22195869</span></a>
+      <a class="soc" href="https://t.me/Channel_and_Bot_News/9" target="_blank" rel="noopener"><b>GitHub <span class="tag bad">снесён</span></b><span>причина — в новостях</span></a>
+      <a class="soc" href="https://lolz.team/members/11127159/" target="_blank" rel="noopener"><b>LZT / lolz</b><span>мой акк — lolz.team</span></a>
+    </div>
+  </section>
+
+  <section class="ch reveal" id="lang">
+    <div class="ch-head"><span class="ch-num">04</span><h2>Языки</h2></div>
+    <div class="ch-body">
+      <dl class="langs">
+        <dt>I. C++</dt><dd>производительность и системные задачи</dd>
+        <dt>II. Python</dt><dd>автоматизация, скрипты, бэкенд</dd>
+        <dt>III. PHP</dt><dd>веб-разработка и серверная логика</dd>
+        <dt>IV. JavaScript</dt><dd>основа браузерных расширений</dd>
+        <dt>V. TypeScript</dt><dd>типизированный JS для надёжного кода</dd>
+      </dl>
+    </div>
+  </section>
+
+  <div class="poster reveal">
+    <h2>Важно!</h2>
+    <p style="margin:0">Я <b>не</b> пишу софт для:</p>
+    <ul>
+      <li>взлома</li>
+      <li>докса / деанона</li>
+      <li>парсеров для сбора чужих данных</li>
+      <li>любых других противоправных действий</li>
+    </ul>
+    <p class="fine">Я законопослушный гражданин. Против скама, докса и всего незаконного — с такими просьбами не писать.</p>
+  </div>
+
+  <section class="ch reveal" id="projects">
+    <div class="ch-head"><span class="ch-num">05</span><h2>Проекты</h2></div>
+    <div class="ch-body">
+      <ul class="rows">
+        <li><span>Новости всех релизов и проектов — <a href="https://t.me/Channel_and_Bot_News" target="_blank" rel="noopener">канал новостей</a></span></li>
+        <li><span>Расширения для браузеров: Opera, GX, Chrome и др. — <a href="https://t.me/Browser_Extension" target="_blank" rel="noopener">Browser_Extension</a></span></li>
+        <li><span>Обходы блокировок от РКН — <a href="https://t.me/Bypassing_Roskomnadzor_blocks" target="_blank" rel="noopener">Bypassing_Roskomnadzor_blocks</a></span></li>
+        <li><span>APK-приложение — <a href="https://t.me/pythonistavp_APK" target="_blank" rel="noopener">pythonistavp_APK</a></span><span class="k"><span class="tag">очень скоро</span></span></li>
+        <li><span>Коллекция котиков :3 — <a href="https://t.me/Cat_photo_collection" target="_blank" rel="noopener">Cat_photo_collection</a></span></li>
+        <li><span>exteraGram — плагины (open source) — <a href="https://t.me/exteraGram_plugins_are_open_sour" target="_blank" rel="noopener">exteraGram_plugins_are_open_sour</a></span></li>
+        <li><span>Plugin Patrol — <a href="https://t.me/Plugin_Patrol" target="_blank" rel="noopener">Plugin_Patrol</a></span></li>
+        <li><span>АнтиСкам — <a href="https://t.me/Channel_and_Bot_News/7" target="_blank" rel="noopener">подробности</a></span><span class="k"><span class="tag">скоро</span></span></li>
+        <li><span>Скрипты / прошивки для STICKS3 — <a href="https://t.me/Scripts_Firmware_for_STICKS3" target="_blank" rel="noopener">Scripts_Firmware_for_STICKS3</a></span></li>
+        <li><span>Скрипты ботов — <a href="https://t.me/Bot_ScriptsTG" target="_blank" rel="noopener">Bot_ScriptsTG</a></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ch reveal" id="bots">
+    <div class="ch-head"><span class="ch-num">06</span><h2>Боты</h2></div>
+    <div class="ch-body">
+      <ul class="rows">
+        <li><span>Звёздный бот — <a href="https://t.me/Star_themed_Telegrambot" target="_blank" rel="noopener">Star_themed_Telegrambot</a></span><span class="k"><span class="tag bad">не работает</span></span></li>
+        <li><span>Антивирус AI — <a href="https://t.me/activate_antivirusbot" target="_blank" rel="noopener">activate_antivirusbot</a> (<a href="https://t.me/Channel_and_Bot_News/4" target="_blank" rel="noopener">статус</a>)</span><span class="k"><span class="tag">техработы</span></span></li>
+        <li><span>Котлет-бот — <a href="https://t.me/Channel_and_Bot_News/5" target="_blank" rel="noopener">анонс</a></span><span class="k"><span class="tag">скоро</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ch reveal" id="fav">
+    <div class="ch-head"><span class="ch-num">07</span><h2>Избранное</h2></div>
+    <div class="ch-body">
+      <ul class="rows">
+        <li><span>Антивирус AI — <a href="https://t.me/activate_antivirusbot" target="_blank" rel="noopener">попробовать</a></span></li>
+        <li><span>exteraGram-плагины — <a href="https://t.me/exteraGram_plugins_are_open_sour" target="_blank" rel="noopener">исходники</a></span></li>
+        <li><span>Новости ботов и проектов — <a href="https://t.me/Channel_and_Bot_News" target="_blank" rel="noopener">подписаться</a></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="ch reveal">
+    <div class="ch-head"><span class="ch-num">08</span><h2>Фонд</h2></div>
+    <div class="ch-body">
+      <p>Благотворительный фонд России — <a href="https://t.me/charitable_foundations" target="_blank" rel="noopener">t.me/charitable_foundations</a></p>
+    </div>
+  </section>
+
+  <footer class="fin">
+    <span>спасибо <a href="https://t.me/monk" target="_blank" rel="noopener">t.me/monk</a> за мессенджер ★ ★ ★</span>
+    <span class="stamp">собрано вручную · ч/б</span>
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll("[data-copy]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var t = btn.getAttribute("data-copy");
+      function done() {
+        var old = btn.textContent;
+        btn.textContent = "скопировано ✓";
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(done).catch(function(){ fallback(); });
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement("textarea");
+        ta.value = t; document.body.appendChild(ta);
+        ta.select(); try { document.execCommand("copy"); } catch(e) {}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+  (function(){
+    var els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) return;
+    els.forEach(function(e){ e.classList.add("pre"); });
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if (en.isIntersecting) { en.target.classList.remove("pre"); en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.08 });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+</script>
+
+</body>
+</html>
